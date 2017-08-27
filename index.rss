@@ -1,0 +1,73 @@
+<?
+require 'PhpId3/BinaryFileReader.php';
+require 'PhpId3/Id3Tags.php';
+require 'PhpId3/Id3TagsReader.php';
+use PhpId3\Id3TagsReader;
+
+$dir = '.';
+$url = $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']);
+
+header('Content-Type: application/rss+xml');
+echo '<?xml version="1.0" encoding="UTF-8"?>';
+?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+  <channel>
+    <atom:link rel="self" type="application/atom+xml" href="<?= $_SERVER['REQUEST_URI'] ?>" title="MP3 Audio"/>
+    <title>Miscellaneous Podcast</title>
+    <generator>https://push.cx/2017/miscpodcast</generator>
+    <description>Miscellaneous Podcast</description>
+    <copyright>Varied</copyright>
+    <language>en-us</language>
+    <pubDate><?= date(DATE_RSS); ?></pubDate>
+    <lastBuildDate><?= date(DATE_RSS); ?></lastBuildDate>
+
+<?
+
+function sorted_mp3s($dir) {
+  $files = array();    
+
+  foreach (scandir($dir) as $filename) {
+    if (substr_compare($filename, '.mp3', -4) == 0) {
+      $files[$filename] = filemtime($dir . '/' . $filename);
+    }
+  }
+
+  arsort($files);
+  $files = array_keys($files);
+
+  return $files;
+}
+
+
+
+foreach(sorted_mp3s($dir) as $filename) {
+
+  $id3 = new Id3TagsReader(fopen($filename, "rb"));
+  $id3->readAllTags();
+  $metadata = $id3->getId3Array();
+
+  //echo "$filename\n";
+  //var_dump($metadata);
+  $title = $metadata['TIT2']['body'];
+  $title = $title ? $title : $metadata['TALB']['body'];
+  $title = $title ? $title : $filename;
+  $desc = $metadata['TIT3']['body'] or $filename;
+  $desc = $desc ? $desc : $filename;
+  $author = $metadata['TPUB']['body'] or $filename;
+  $author = $author ? $author : $filename;
+
+?>
+    <item>
+      <title><?= $title ?></title>
+      <guid isPermaLink="false"><?= $filename ?></guid>
+      <description><?= $desc ?></description>
+      <content:encoded><?= $desc ?></content:encoded>
+      <pubDate><?= date(DATE_RSS, filemtime($filename)) ?></pubDate>
+      <author><?= $author ?></author>
+      <enclosure url="<?= "$url$filename" ?>" length="<?= filesize($filename) ?>" type="audio/mpeg"/>
+    </item>
+<?
+  }
+?>
+  </channel>
+</rss>
