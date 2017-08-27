@@ -58,12 +58,12 @@ foreach(sorted_mp3s($dir) as $filename) {
 
 ?>
     <item>
-      <title><?= $title ?></title>
+      <title><?= utf8_encode(trim($title)) ?></title>
       <guid isPermaLink="false"><?= $filename ?></guid>
-      <description><?= $desc ?></description>
-      <content:encoded><?= $desc ?></content:encoded>
+      <description><?= utf8_encode(trim($desc)) ?></description>
+      <content:encoded><?= utf8_encode(trim($desc)) ?></content:encoded>
       <pubDate><?= date(DATE_RSS, filemtime($filename)) ?></pubDate>
-      <author><?= $author ?></author>
+      <author><?= utf8_encode(trim($author)) ?></author>
       <enclosure url="<?= "$url$filename" ?>" length="<?= filesize($filename) ?>" type="audio/mpeg"/>
     </item>
 <?
