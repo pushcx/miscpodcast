@@ -12,7 +12,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
   <channel>
-    <atom:link rel="self" type="application/atom+xml" href="<?= $_SERVER['REQUEST_URI'] ?>" title="MP3 Audio"/>
+    <atom:link rel="self" type="application/atom+xml" href="<?= $url . $_SERVER['PHP_SELF'] ?>" title="MP3 Audio"/>
     <title>Miscellaneous Podcast</title>
     <generator>https://push.cx/2017/miscpodcast</generator>
     <description>Miscellaneous Podcast</description>
@@ -62,13 +62,13 @@ foreach(sorted_mp3s($dir) as $filename) {
 
 ?>
     <item>
-      <title><?= utf8_encode(trim($title)) ?></title>
-      <guid isPermaLink="false"><?= $filename ?></guid>
-      <description><?= utf8_encode(trim($desc)) ?></description>
-      <content:encoded><?= utf8_encode(trim($desc)) ?></content:encoded>
+      <title><?= htmlspecialchars(utf8_encode(trim($title))) ?></title>
+      <guid isPermaLink="false"><?= urlencode($filename) ?></guid>
+      <description><?= htmlspecialchars(utf8_encode(trim($desc))) ?></description>
+      <content:encoded><?= htmlspecialchars(utf8_encode(trim($desc))) ?></content:encoded>
       <pubDate><?= date(DATE_RSS, filemtime($filename)) ?></pubDate>
-      <author><?= utf8_encode(trim($author)) ?></author>
-      <enclosure url="<?= "$url$filename" ?>" length="<?= filesize($filename) ?>" type="audio/mpeg"/>
+      <author><?= htmlspecialchars(utf8_encode(trim($author))) ?></author>
+      <enclosure url="<?= $url . urlencode($filename) ?>" length="<?= filesize($filename) ?>" type="audio/mpeg"/>
     </item>
 <?
   }
