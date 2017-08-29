@@ -42,9 +42,13 @@ function sorted_mp3s($dir) {
 
 foreach(sorted_mp3s($dir) as $filename) {
 
-  $id3 = new Id3TagsReader(fopen($filename, "rb"));
-  $id3->readAllTags();
-  $metadata = $id3->getId3Array();
+  $metadata = array();
+  // id3 loads entire file into ram at once
+  if (filesize($filename) < 30000000) {
+    $id3 = new Id3TagsReader(fopen($filename, "rb"));
+    $id3->readAllTags();
+    $metadata = $id3->getId3Array();
+  }
 
   //echo "$filename\n";
   //var_dump($metadata);
