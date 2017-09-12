@@ -68,7 +68,7 @@ foreach(sorted_mp3s($dir) as $filename) {
       <content:encoded><?= htmlspecialchars(utf8_encode(trim($desc))) ?></content:encoded>
       <pubDate><?= date(DATE_RSS, filemtime($filename)) ?></pubDate>
       <author><?= htmlspecialchars(utf8_encode(trim($author))) ?></author>
-      <enclosure url="<?= $url . '/' . urlencode($filename) ?>" length="<?= filesize($filename) ?>" type="audio/mpeg"/>
+      <enclosure url="<?= $url . '/' . rawurlencode($filename) ?>" length="<?= filesize($filename) ?>" type="audio/mpeg"/>
     </item>
 <?
   }
