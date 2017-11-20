@@ -55,6 +55,7 @@ foreach(sorted_mp3s($dir) as $filename) {
   $title = $metadata['TIT2']['body'];
   $title = $title ? $title : $metadata['TALB']['body'];
   $title = $title ? $title : $filename;
+  $title = preg_replace('/[^\PC\s]/u', '', $title);
   $desc = $metadata['TIT3']['body'] or $filename;
   $desc = $desc ? $desc : $filename;
   $author = $metadata['TPUB']['body'] or $filename;
