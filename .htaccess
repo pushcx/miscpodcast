@@ -1,1 +1,2 @@
-AddHandler php-cgi .rss
+AddHandler fcgid-script .rss
+FCGIWrapper "/dh/cgi-system/php70.cgi" .rss
